@@ -21,12 +21,14 @@ namespace EditorTabbing
         public static ModConfiguration Config;
 
         [AutoRegisterConfigKey]
-        private static ModConfigurationKey<bool> EnableBackwardsMovement = new ModConfigurationKey<bool>("EnableBackwardsMovement", "Moves forward with Enter and backwards with Tab when enabled. Only forward with Tab when disabled.", () => false);
+        private static readonly ModConfigurationKey<bool> OverlayCompatibilityBackwardsMovement = new ModConfigurationKey<bool>("OverlayCompatibilityBackwardsMovement", "Moves forward with Enter when Steam Overlay could be enabled to not trigger it.", () => true);
 
+        private static bool launchedInDesktop = false;
         public override string Author => "Banane9";
         public override string Link => "https://github.com/Banane9/NeosEditorTabbing";
         public override string Name => "EditorTabbing";
-        public override string Version => "1.0.0";
+        public override string Version => "1.1.0";
+        private static bool SteamOverlayPossible => launchedInDesktop && !Engine.Current.TokensSupported;
 
         public override void OnEngineInit()
         {
@@ -34,6 +36,9 @@ namespace EditorTabbing
             Config = GetConfiguration();
             Config.Save(true);
             harmony.PatchAll();
+
+            var outputDevice = Engine.Current.SystemInfo.HeadDevice;
+            launchedInDesktop = outputDevice == HeadOutputDevice.Screen || outputDevice == HeadOutputDevice.Screen360 || outputDevice == HeadOutputDevice.LegacyScreen;
         }
 
         [HarmonyPatch(typeof(TextEditor))]
@@ -81,14 +86,15 @@ namespace EditorTabbing
                     // i.e. when there is an update - running before EditingRoutine checks it
                     PostItem = (item, returned) =>
                     {
-                        if (Config.GetValue(EnableBackwardsMovement) && !__instance.InputInterface.GetKey(Key.Shift)
+                        if (SteamOverlayPossible && Config.GetValue(OverlayCompatibilityBackwardsMovement) && !__instance.InputInterface.GetKey(Key.Shift)
                             && (__instance.InputInterface.TypeDelta.Contains('\n') || __instance.InputInterface.TypeDelta.Contains('\r')))
                             __instance.RunInUpdates(1, () => changeFocus(__instance, false));
 
                         if (__instance.InputInterface.GetKeyDown(Key.Tab))
                         {
                             __instance.Defocus();
-                            changeFocus(__instance, Config.GetValue(EnableBackwardsMovement));
+                            changeFocus(__instance,
+                                __instance.InputInterface.GetKey(Key.Shift) || (SteamOverlayPossible && Config.GetValue(OverlayCompatibilityBackwardsMovement)));
                         }
                     }
                 }.GetEnumerator();

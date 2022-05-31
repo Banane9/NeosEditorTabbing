@@ -1,10 +1,9 @@
 Editor Tabbing
 ==============
 
-A [NeosModLoader](https://github.com/zkxs/NeosModLoader) mod for [Neos VR](https://neos.com/) that lets you move between text inputs.
+A [NeosModLoader](https://github.com/zkxs/NeosModLoader) mod for [Neos VR](https://neos.com/) that lets you move between text inputs using (Shift +) Tab.
 
-Due to all the actions bound to tab, it sadly wasn't possible to set up the default tab / shift+tab behavior.  
-Depending on the configuration, tab either moves only forwards, or tab moves backwards and enter forwards.
+The mod detects when Steam Overlay could be triggered by Shift + Enter and has a toggle option to only use just Enter to move to the next field and just Tab to move back when both are the case.
 
 
 ## Installation

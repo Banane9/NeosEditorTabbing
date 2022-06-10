@@ -106,19 +106,10 @@ namespace EditorTabbing
                 var objectRoot = slot.GetObjectRoot();
 
                 if (implicitRoot == null)
-                {
                     return objectRoot;
-                }
 
-                if (objectRoot == slot)
-                {
+                if (objectRoot == slot || implicitRoot.Slot.HierachyDepth > objectRoot.HierachyDepth)
                     return implicitRoot.Slot;
-                }
-
-                if (implicitRoot.Slot.HierachyDepth > objectRoot.HierachyDepth)
-                {
-                    return implicitRoot.Slot;
-                }
 
                 return objectRoot;
             }

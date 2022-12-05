@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using BaseX;
-using CodeX;
 using FrooxEngine;
-using FrooxEngine.LogiX;
-using FrooxEngine.LogiX.Data;
-using FrooxEngine.LogiX.ProgramFlow;
-using FrooxEngine.UIX;
 using HarmonyLib;
 using NeosModLoader;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+using Key = FrooxEngine.Key;
 
 namespace EditorTabbing
 {
@@ -27,8 +20,9 @@ namespace EditorTabbing
         public override string Author => "Banane9";
         public override string Link => "https://github.com/Banane9/NeosEditorTabbing";
         public override string Name => "EditorTabbing";
-        public override string Version => "1.1.0";
+        public override string Version => "1.2.0";
         private static bool SteamOverlayPossible => launchedInDesktop && !Engine.Current.TokensSupported;
+        private static bool hasUnconfirmedImeInput = false;
 
         public override void OnEngineInit()
         {
@@ -39,6 +33,14 @@ namespace EditorTabbing
 
             var outputDevice = Engine.Current.SystemInfo.HeadDevice;
             launchedInDesktop = outputDevice == HeadOutputDevice.Screen || outputDevice == HeadOutputDevice.Screen360 || outputDevice == HeadOutputDevice.LegacyScreen;
+
+            Keyboard.current.onIMECompositionChange += OnIMECompositionChange;
+        }
+
+        private void OnIMECompositionChange(IMECompositionString compStr)
+        {
+            // when you confirm the candidate, an empty string comes in.
+            hasUnconfirmedImeInput = compStr.Count != 0;
         }
 
         [HarmonyPatch(typeof(TextEditor))]
@@ -90,7 +92,7 @@ namespace EditorTabbing
                             && (__instance.InputInterface.TypeDelta.Contains('\n') || __instance.InputInterface.TypeDelta.Contains('\r')))
                             __instance.RunInUpdates(1, () => changeFocus(__instance, false));
 
-                        if (__instance.InputInterface.GetKeyDown(Key.Tab))
+                        if (!hasUnconfirmedImeInput && __instance.InputInterface.GetKeyDown(Key.Tab))
                         {
                             __instance.Defocus();
                             changeFocus(__instance,

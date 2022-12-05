@@ -14,8 +14,8 @@
     <TargetFrameworkProfile />
     <ProjectGuid>{0322B2EF-7452-479D-BAE2-FCAB75033337}</ProjectGuid>
     <NeosPath>$(MSBuildThisFileDirectory)NeosVR</NeosPath>
-    <NeosPath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\NeosVR\')">C:\Program Files (x86)\Steam\steamapps\common\NeosVR\</NeosPath>
     <NeosPath Condition="Exists('C:\Neos\app\')">C:\Neos\app\</NeosPath>
+    <NeosPath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\NeosVR\')">C:\Program Files (x86)\Steam\steamapps\common\NeosVR\</NeosPath>
     <NeosPath Condition="Exists('$(HOME)/.steam/steam/steamapps/common/NeosVR/')">$(HOME)/.steam/steam/steamapps/common/NeosVR/</NeosPath>
     <CopyToMods Condition="'$(CopyToMods)'==''">true</CopyToMods>
   </PropertyGroup>
@@ -38,15 +38,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="HarmonyLib">
-      <HintPath>$(NeosPath)nml_libs\0Harmony.dll</HintPath>
+      <HintPath Condition="Exists('$(NeosPath)nml_libs\0Harmony.dll')">$(NeosPath)nml_libs\0Harmony.dll</HintPath>
       <HintPath Condition="Exists('$(NeosPath)0Harmony.dll')">$(NeosPath)0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="FrooxEngine">
       <HintPath>$(NeosPath)Neos_Data\Managed\FrooxEngine.dll</HintPath>
     </Reference>
     <Reference Include="NeosModLoader">
-      <HintPath>$(NeosPath)Libraries\NeosModLoader.dll</HintPath>
       <HintPath Condition="Exists('$(NeosPath)NeosModLoader.dll')">$(NeosPath)NeosModLoader.dll</HintPath>
+      <HintPath Condition="Exists('$(NeosPath)Libraries\NeosModLoader.dll')">$(NeosPath)Libraries\NeosModLoader.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InputSystem">
       <HintPath>$(NeosPath)Neos_Data\Managed\Unity.InputSystem.dll</HintPath>
@@ -55,7 +55,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EditorTabbing.cs" />
-    <Compile Include="EnumerableInjector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

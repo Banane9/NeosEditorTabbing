@@ -3,6 +3,7 @@ using System.Linq;
 using FrooxEngine;
 using HarmonyLib;
 using NeosModLoader;
+using NeosModLoader.Utility;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using Key = FrooxEngine.Key;
@@ -16,13 +17,13 @@ namespace EditorTabbing
         [AutoRegisterConfigKey]
         private static readonly ModConfigurationKey<bool> OverlayCompatibilityBackwardsMovement = new ModConfigurationKey<bool>("OverlayCompatibilityBackwardsMovement", "Moves forward with Enter when Steam Overlay could be enabled to not trigger it.", () => true);
 
+        private static bool hasUnconfirmedImeInput = false;
         private static bool launchedInDesktop = false;
         public override string Author => "Banane9";
         public override string Link => "https://github.com/Banane9/NeosEditorTabbing";
         public override string Name => "EditorTabbing";
-        public override string Version => "1.2.0";
+        public override string Version => "2.0.0";
         private static bool SteamOverlayPossible => launchedInDesktop && !Engine.Current.TokensSupported;
-        private static bool hasUnconfirmedImeInput = false;
 
         public override void OnEngineInit()
         {
@@ -86,7 +87,7 @@ namespace EditorTabbing
                 {
                     // PostItem is after control has returned to the enumerator again,
                     // i.e. when there is an update - running before EditingRoutine checks it
-                    PostItem = (item, returned) =>
+                    PostItem = (originalItem, transformedItem, returned) =>
                     {
                         if (SteamOverlayPossible && Config.GetValue(OverlayCompatibilityBackwardsMovement) && !__instance.InputInterface.GetKey(Key.Shift)
                             && (__instance.InputInterface.TypeDelta.Contains('\n') || __instance.InputInterface.TypeDelta.Contains('\r')))

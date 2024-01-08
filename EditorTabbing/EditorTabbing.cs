@@ -2,15 +2,15 @@
 using System.Linq;
 using FrooxEngine;
 using HarmonyLib;
-using NeosModLoader;
-using NeosModLoader.Utility;
+using ResoniteModLoader;
+using ResoniteModLoader.Utility;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using Key = FrooxEngine.Key;
 
 namespace EditorTabbing
 {
-    public class EditorTabbing : NeosMod
+    public class EditorTabbing : ResoniteMod
     {
         public static ModConfiguration Config;
 
@@ -22,8 +22,8 @@ namespace EditorTabbing
         public override string Author => "Banane9";
         public override string Link => "https://github.com/Banane9/NeosEditorTabbing";
         public override string Name => "EditorTabbing";
-        public override string Version => "2.0.0";
-        private static bool SteamOverlayPossible => launchedInDesktop && !Engine.Current.TokensSupported;
+        public override string Version => "3.0.0";
+        private static bool SteamOverlayPossible => launchedInDesktop;
 
         public override void OnEngineInit()
         {
@@ -33,7 +33,7 @@ namespace EditorTabbing
             harmony.PatchAll();
 
             var outputDevice = Engine.Current.SystemInfo.HeadDevice;
-            launchedInDesktop = outputDevice == HeadOutputDevice.Screen || outputDevice == HeadOutputDevice.Screen360 || outputDevice == HeadOutputDevice.LegacyScreen;
+            launchedInDesktop = outputDevice == HeadOutputDevice.Screen || outputDevice == HeadOutputDevice.Screen360;
 
             Keyboard.current.onIMECompositionChange += OnIMECompositionChange;
         }
@@ -105,14 +105,14 @@ namespace EditorTabbing
 
             private static Slot getObjectRoot(Slot slot)
             {
-                var implicitRoot = slot.GetComponentInParents<IImplicitObjectRoot>(null, true, false);
+                var iObjRoot = slot.GetComponentInParents<IObjectRoot>(null, true, false);
                 var objectRoot = slot.GetObjectRoot();
 
-                if (implicitRoot == null)
+                if (iObjRoot == null)
                     return objectRoot;
 
-                if (objectRoot == slot || implicitRoot.Slot.HierachyDepth > objectRoot.HierachyDepth)
-                    return implicitRoot.Slot;
+                if (objectRoot == slot || iObjRoot.Slot.HierachyDepth > objectRoot.HierachyDepth)
+                    return iObjRoot.Slot;
 
                 return objectRoot;
             }

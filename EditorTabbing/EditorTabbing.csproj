@@ -8,15 +8,16 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>EditorTabbing</RootNamespace>
     <AssemblyName>EditorTabbing</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
     <ProjectGuid>{0322B2EF-7452-479D-BAE2-FCAB75033337}</ProjectGuid>
-    <NeosPath>$(MSBuildThisFileDirectory)NeosVR</NeosPath>
-    <NeosPath Condition="Exists('C:\Neos\app\')">C:\Neos\app\</NeosPath>
-    <NeosPath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\NeosVR\')">C:\Program Files (x86)\Steam\steamapps\common\NeosVR\</NeosPath>
-    <NeosPath Condition="Exists('$(HOME)/.steam/steam/steamapps/common/NeosVR/')">$(HOME)/.steam/steam/steamapps/common/NeosVR/</NeosPath>
+    <AppName>Resonite</AppName>
+	  <ModLoaderShort>rml</ModLoaderShort>
+    <AppPath>$(MSBuildThisFileDirectory)$(AppName)</AppPath>
+    <AppPath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\$(AppName)\')">C:\Program Files (x86)\Steam\steamapps\common\$(AppName)\</AppPath>
+    <AppPath Condition="Exists('$(HOME)/.steam/steam/steamapps/common/$(AppName)/')">$(HOME)/.steam/steam/steamapps/common/$(AppName)/</AppPath>
     <CopyToMods Condition="'$(CopyToMods)'==''">true</CopyToMods>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -38,18 +39,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="HarmonyLib">
-      <HintPath Condition="Exists('$(NeosPath)nml_libs\0Harmony.dll')">$(NeosPath)nml_libs\0Harmony.dll</HintPath>
-      <HintPath Condition="Exists('$(NeosPath)0Harmony.dll')">$(NeosPath)0Harmony.dll</HintPath>
+      <HintPath>$(AppPath)$(ModLoaderShort)_libs\0Harmony.dll</HintPath>
+      <HintPath Condition="Exists('$(AppPath)0Harmony.dll')">$(AppPath)0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="$(AppName)ModLoader">
+      <HintPath>$(AppPath)$(AppName)ModLoader.dll</HintPath>
+      <HintPath>$(AppPath)Libraries\$(AppName)ModLoader.dll</HintPath>
     </Reference>
     <Reference Include="FrooxEngine">
-      <HintPath>$(NeosPath)Neos_Data\Managed\FrooxEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="NeosModLoader">
-      <HintPath Condition="Exists('$(NeosPath)NeosModLoader.dll')">$(NeosPath)NeosModLoader.dll</HintPath>
-      <HintPath Condition="Exists('$(NeosPath)Libraries\NeosModLoader.dll')">$(NeosPath)Libraries\NeosModLoader.dll</HintPath>
+      <HintPath>$(AppPath)$(AppName)_Data\Managed\FrooxEngine.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InputSystem">
-      <HintPath>$(NeosPath)Neos_Data\Managed\Unity.InputSystem.dll</HintPath>
+      <HintPath>$(AppPath)$(AppName)_Data\Managed\Unity.InputSystem.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
@@ -62,7 +63,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(CopyToMods)'=='true'">
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(NeosPath)nml_mods" />
-    <Message Text="Copied $(TargetFileName) to $(NeosPath)" Importance="high" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(AppPath)$(ModLoaderShort)_mods" />
+    <Message Text="Copied $(TargetFileName) to $(AppPath)" Importance="high" />
   </Target>
 </Project>
